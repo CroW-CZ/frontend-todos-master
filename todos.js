@@ -1,40 +1,48 @@
-//start...
 
+var todoStringField = document.getElementById('todoString');
+var todoTemplate = document.getElementById('todoTemplate').innerHTML;
+var listDom = document.getElementById('todoList');
 
-//console.log('hello world')
+todoStringField.addEventListener('keyup', addTodo);
 
-function getDom(id){
-	return document.getElementById(id);
+listDom.addEventListener('click', checkDelete);
+
+listDom.innerHTML = loadData();
+
+function addTodo(event) {
+	if (event.keyCode !== 13 || todoStringField.value === "") {
+		event.stopPropagation();
+		return;
+	}
+
+	var newTodo = todoStringField.value;
+	todoStringField.value = "";
+
+	console.log('새로운 todo : ', newTodo);
+
+	listDom.innerHTML += tmpl(todoTemplate, {todo: newTodo});
+
+	saveData();
 }
 
-
-
-//var todoStringField = document.getElementById('todoString');
-var todoStringField = getDom('todoString');
-
-//var from = document.getElementById('todoForm');
-
-todoStringField.addEventListener('keyup', function(event){
-
-	//console.log(event.keyCode)
-	//console.log( todoStringField , todoStringField.value );
-	if(event.keyCode === 13){
-		console.log(todoStringField.value);
-
-		var newTodo = todoStringField.value;
-		todoStringField.value = "";
-
-		var listDom = getDom('todoList');
-
-		listDom.innerHTML += ' \
-		<li>\
-			<button class="delete">×</button>\
-            <input type="checkbox" class="toggle-checked" id="todoString">\
-            <span class="text">' + newTodo +'</span>\
-        </li>\
-        '
+function checkDelete(event){
+	if(event.target.className !== 'delete'){
+		return;
 	}
-});
 
+	var deleteBtn = event.target;
 
-console.log( todoStringField, todoStringField.value );
+	deleteBtn.parentElement.remove();
+
+	saveData();
+}
+
+function loadData(){
+	console.log('loadData()');
+	return	localStorage.getItem('todoHtml');
+}
+
+function saveData(){
+	console.log('saveData()');
+	localStorage.setItem('todoHtml', listDom.innerHTML);
+}
